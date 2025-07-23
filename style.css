@@ -39,13 +39,15 @@ body {
   background-color: #28a745;
 }
 
-.slider-wrapper {
-  position: relative;
+#overUnderControls,
+#betweenControls {
   margin: 20px 0;
 }
 
 #slider {
   width: 100%;
+  position: relative;
+  z-index: 1;
 }
 
 #sliderOverlay {
@@ -56,6 +58,12 @@ body {
   width: 100%;
   background: transparent;
   z-index: 0;
+  pointer-events: none;
+}
+
+input[type="number"] {
+  width: 80px;
+  margin: 10px;
 }
 
 .multiplier {
