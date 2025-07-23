@@ -1,172 +1,106 @@
-const balanceDisplay = document.getElementById("balance");
-const profitDisplay = document.getElementById("profit");
-const resultDisplay = document.getElementById("result");
-const winDisplay = document.getElementById("wins");
-const lossDisplay = document.getElementById("losses");
-const winrateDisplay = document.getElementById("winrate");
-const history = document.getElementById("history");
-const betInput = document.getElementById("bet");
-const slider = document.getElementById("bet-slider");
-const targetInput = document.getElementById("target");
-const minTargetInput = document.getElementById("min-target");
-const maxTargetInput = document.getElementById("max-target");
-const rollBtn = document.getElementById("roll-btn");
-const repeatBtn = document.getElementById("repeat-btn");
-const resetBtn = document.getElementById("reset-btn");
-const dice = document.getElementById("dice");
+let balance = 1000;
+let mode = 'under';
 
-let balance = parseInt(localStorage.getItem("balance")) || 100;
-let profit = parseInt(localStorage.getItem("profit")) || 0;
-let wins = parseInt(localStorage.getItem("wins")) || 0;
-let losses = parseInt(localStorage.getItem("losses")) || 0;
-let lastBet = JSON.parse(localStorage.getItem("lastBet")) || null;
+const balanceEl = document.getElementById("balance");
+const betInput = document.getElementById("betAmount");
+const slider = document.getElementById("slider");
+const multiplierEl = document.getElementById("multiplier");
+const resultEl = document.getElementById("result");
+const diceEl = document.getElementById("dice");
+const sliderOverlay = document.getElementById("sliderOverlay");
 
-function updateDisplays() {
-  balanceDisplay.textContent = balance;
-  profitDisplay.textContent = profit;
-  winDisplay.textContent = wins;
-  lossDisplay.textContent = losses;
-  const total = wins + losses;
-  winrateDisplay.textContent = total > 0 ? ((wins / total) * 100).toFixed(1) : 0;
+const underBtn = document.getElementById("underBtn");
+const betweenBtn = document.getElementById("betweenBtn");
+const overBtn = document.getElementById("overBtn");
+
+function updateBalanceDisplay() {
+  balanceEl.textContent = balance.toFixed(2);
 }
 
-function updateStorage() {
-  localStorage.setItem("balance", balance);
-  localStorage.setItem("profit", profit);
-  localStorage.setItem("wins", wins);
-  localStorage.setItem("losses", losses);
-  localStorage.setItem("lastBet", JSON.stringify(lastBet));
+function updateSliderOverlay() {
+  const val = parseInt(slider.value);
+  if (mode === 'under') {
+    sliderOverlay.style.background = `linear-gradient(to right, #28a745 ${val}%, transparent ${val}%)`;
+  } else if (mode === 'over') {
+    sliderOverlay.style.background = `linear-gradient(to right, transparent ${val}%, #28a745 ${val}%)`;
+  } else {
+    sliderOverlay.style.background = 'transparent';
+  }
 }
 
-function getSelectedDirection() {
-  const selected = document.querySelector('input[name="direction"]:checked');
-  return selected ? selected.value : "under";
+function calculateMultiplier() {
+  const chance = mode === 'under'
+    ? slider.value
+    : mode === 'over'
+    ? 100 - slider.value
+    : 50; // Fixed example for between
+
+  const houseEdge = 0.01;
+  const multiplier = (100 / chance) * (1 - houseEdge);
+  return multiplier.toFixed(2);
 }
 
-function updateInputVisibility() {
-  const direction = getSelectedDirection();
-  targetInput.style.display = direction === "between" ? "none" : "inline-block";
-  minTargetInput.style.display = direction === "between" ? "inline-block" : "none";
-  maxTargetInput.style.display = direction === "between" ? "inline-block" : "none";
+function updateMultiplierDisplay() {
+  multiplierEl.textContent = `x${calculateMultiplier()}`;
 }
 
-// Event to sync slider & input
-slider.addEventListener("input", () => {
-  betInput.value = slider.value;
-});
-betInput.addEventListener("input", () => {
-  slider.value = betInput.value;
-});
+function setMode(newMode) {
+  mode = newMode;
+  underBtn.classList.remove("active");
+  betweenBtn.classList.remove("active");
+  overBtn.classList.remove("active");
+  if (mode === 'under') underBtn.classList.add("active");
+  if (mode === 'between') betweenBtn.classList.add("active");
+  if (mode === 'over') overBtn.classList.add("active");
+  updateSliderOverlay();
+  updateMultiplierDisplay();
+}
 
-// Update target input visibility on mode change
-document.querySelectorAll('input[name="direction"]').forEach((radio) => {
-  radio.addEventListener("change", updateInputVisibility);
-});
-
-rollBtn.addEventListener("click", () => {
-  const bet = parseInt(betInput.value);
-  if (isNaN(bet) || bet <= 0 || bet > balance) {
-    resultDisplay.textContent = "❌ Invalid bet!";
+function rollDice() {
+  const betAmount = parseFloat(betInput.value);
+  if (betAmount <= 0 || betAmount > balance) {
+    alert("Invalid bet.");
     return;
   }
 
-  const direction = getSelectedDirection();
   const roll = Math.floor(Math.random() * 100) + 1;
+  const target = parseInt(slider.value);
+  const multiplier = parseFloat(calculateMultiplier());
 
-  // Animate dice
-  dice.textContent = "?";
-  dice.style.transform = "rotate(720deg)";
+  diceEl.style.transform = "rotate(720deg)";
   setTimeout(() => {
-    dice.textContent = roll;
-    dice.style.transform = "rotate(0deg)";
-  }, 300);
+    diceEl.style.transform = "rotate(0deg)";
+    diceEl.textContent = roll;
 
-  let win = false;
-  if (direction === "under") {
-    const target = parseInt(targetInput.value);
-    if (isNaN(target) || target <= 1 || target >= 100) {
-      resultDisplay.textContent = "❌ Invalid target!";
-      return;
+    let won = false;
+    if (mode === 'under' && roll < target) won = true;
+    if (mode === 'over' && roll > target) won = true;
+    if (mode === 'between' && roll > 33 && roll < 66) won = true; // Example between range
+
+    if (won) {
+      const winnings = betAmount * multiplier;
+      balance += winnings - betAmount;
+      resultEl.textContent = `You won! +$${(winnings - betAmount).toFixed(2)}`;
+    } else {
+      balance -= betAmount;
+      resultEl.textContent = `You lost! -$${betAmount.toFixed(2)}`;
     }
-    win = roll < target;
-  } else if (direction === "over") {
-    const target = parseInt(targetInput.value);
-    if (isNaN(target) || target <= 1 || target >= 100) {
-      resultDisplay.textContent = "❌ Invalid target!";
-      return;
-    }
-    win = roll > target;
-  } else if (direction === "between") {
-    const min = parseInt(minTargetInput.value);
-    const max = parseInt(maxTargetInput.value);
-    if (isNaN(min) || isNaN(max) || min >= max || min <= 1 || max >= 100) {
-      resultDisplay.textContent = "❌ Invalid range!";
-      return;
-    }
-    win = roll > min && roll < max;
-  }
 
-  if (win) {
-    balance += bet;
-    profit += bet;
-    wins++;
-    resultDisplay.innerHTML = `✅ You <span class="win">won</span>! (${roll})`;
-  } else {
-    balance -= bet;
-    profit -= bet;
-    losses++;
-    resultDisplay.innerHTML = `❌ You <span class="lose">lost</span>! (${roll})`;
-  }
+    updateBalanceDisplay();
+  }, 500);
+}
 
-  lastBet = {
-    bet,
-    direction,
-    target: targetInput.value,
-    min: minTargetInput.value,
-    max: maxTargetInput.value,
-  };
-
-  updateDisplays();
-  updateStorage();
-
-  const item = document.createElement("li");
-  item.textContent = `Bet $${bet} on ${direction} — ${win ? "Won ✅" : "Lost ❌"} (Rolled ${roll})`;
-  item.className = win ? "win" : "lose";
-  history.insertBefore(item, history.firstChild);
+// Event Listeners
+slider.addEventListener("input", () => {
+  updateSliderOverlay();
+  updateMultiplierDisplay();
 });
 
-repeatBtn.addEventListener("click", () => {
-  if (!lastBet) return;
+underBtn.addEventListener("click", () => setMode('under'));
+betweenBtn.addEventListener("click", () => setMode('between'));
+overBtn.addEventListener("click", () => setMode('over'));
+document.getElementById("rollBtn").addEventListener("click", rollDice);
 
-  betInput.value = lastBet.bet;
-  slider.value = lastBet.bet;
-
-  const dirInput = document.querySelector(`input[value="${lastBet.direction}"]`);
-  dirInput.checked = true;
-  dirInput.dispatchEvent(new Event("change")); // Ensure inputs update
-
-  targetInput.value = lastBet.target || "";
-  minTargetInput.value = lastBet.min || "";
-  maxTargetInput.value = lastBet.max || "";
-
-  rollBtn.click();
-});
-
-resetBtn.addEventListener("click", () => {
-  if (!confirm("Reset all progress?")) return;
-
-  balance = 100;
-  profit = 0;
-  wins = 0;
-  losses = 0;
-  lastBet = null;
-
-  localStorage.clear();
-  history.innerHTML = "";
-  updateDisplays();
-  resultDisplay.textContent = "Progress reset.";
-  dice.textContent = "?";
-});
-
-updateDisplays();
-updateInputVisibility();
+// Init
+setMode("under");
+updateBalanceDisplay();

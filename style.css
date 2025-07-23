@@ -1,153 +1,83 @@
 body {
   font-family: 'Segoe UI', sans-serif;
-  background: linear-gradient(135deg, #1f1c2c, #928dab);
-  color: #eee;
+  background: linear-gradient(to right, #141e30, #243b55);
+  color: white;
   text-align: center;
   padding: 30px;
-  min-height: 100vh;
   margin: 0;
 }
+
 .container {
-  background: rgba(0, 0, 0, 0.7);
   max-width: 480px;
-  width: 100%;
   margin: auto;
   padding: 20px;
-  border-radius: 16px;
-  box-sizing: border-box;
-  box-shadow: 0 8px 20px rgba(0, 0, 0, 0.5);
-}
-input, button {
-  margin: 8px;
-  padding: 10px;
-  font-size: 1em;
-  border: none;
-  border-radius: 6px;
-  max-width: 100%;
-}
-input[type="number"] {
-  width: 100%;
-  max-width: 140px;
-  box-sizing: border-box;
-}
-#bet-slider {
-  width: 100%;
-  margin-top: 8px;
-  margin-bottom: 12px;
-  accent-color: #00b894;
-  box-sizing: border-box;
+  background: rgba(0, 0, 0, 0.7);
+  border-radius: 12px;
 }
 
-/* Mode toggle buttons */
-.mode {
-  display: flex;
-  flex-wrap: wrap;
-  justify-content: center;
-  gap: 10px;
-  margin: 10px 0;
+.bet-input input {
+  width: 100px;
+  padding: 5px;
+  margin-top: 5px;
 }
-.mode input[type="radio"] {
-  display: none;
+
+.mode-buttons {
+  margin: 20px 0;
 }
-.mode label {
-  background: #34495e;
-  padding: 10px 16px;
+
+.mode-buttons button {
+  padding: 10px 15px;
+  margin: 5px;
+  border: none;
+  background-color: #444;
+  color: white;
   border-radius: 8px;
   cursor: pointer;
-  color: white;
-  user-select: none;
-  transition: all 0.3s ease;
-  border: 2px solid transparent;
-}
-.mode input[type="radio"]:checked + label {
-  background: #00b894;
-  border-color: #00e3aa;
-  color: white;
-  box-shadow: 0 0 8px #00e3aa88;
-}
-.mode label:hover {
-  background: #3d566e;
 }
 
-.targets {
-  display: flex;
-  flex-wrap: wrap;
-  justify-content: center;
-  gap: 10px;
-  margin-bottom: 15px;
+.mode-buttons button.active {
+  background-color: #28a745;
 }
 
-/* Buttons */
-.button-group {
-  display: flex;
-  justify-content: center;
-  flex-wrap: wrap;
-  gap: 10px;
-  margin: 10px 0;
+.slider-wrapper {
+  position: relative;
+  margin: 20px 0;
 }
-button {
-  cursor: pointer;
+
+#slider {
+  width: 100%;
+}
+
+#sliderOverlay {
+  position: absolute;
+  top: 13px;
+  left: 0;
+  height: 6px;
+  width: 100%;
+  background: transparent;
+  z-index: 0;
+}
+
+.multiplier {
+  margin-top: 10px;
+}
+
+#rollBtn {
+  padding: 12px 25px;
+  background-color: #007bff;
   border: none;
-  padding: 12px 20px;
-  border-radius: 10px;
-  font-size: 16px;
-  transition: background 0.3s ease, transform 0.1s ease;
-  min-width: 100px;
   color: white;
-  box-shadow: 0 4px 10px rgba(0,0,0,0.2);
-}
-#roll-btn, #repeat-btn {
-  background: #00b894;
-}
-#roll-btn:hover, #repeat-btn:hover {
-  background: #00a383;
-  transform: scale(1.05);
-}
-#reset-btn {
-  background: #e74c3c;
-}
-#reset-btn:hover {
-  background: #c0392b;
-  transform: scale(1.05);
+  border-radius: 8px;
+  cursor: pointer;
 }
 
-/* Dice & Result */
-#dice-container {
-  margin: 20px auto;
-  height: 80px;
+.dice-animation {
+  font-size: 48px;
+  margin-top: 20px;
+  transition: transform 0.3s;
 }
-#dice {
-  font-size: 36px;
-  width: 60px;
-  height: 60px;
-  margin: auto;
-  background: white;
-  color: black;
-  border-radius: 10px;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  transition: transform 0.5s ease;
-}
+
 .result {
-  margin-top: 15px;
-  font-weight: bold;
-}
-
-/* History */
-#history {
-  list-style: none;
-  padding: 0;
-  margin-top: 15px;
-  text-align: left;
-}
-#history li {
-  padding: 6px;
-  font-size: 14px;
-}
-.win {
-  color: #2ecc71;
-}
-.lose {
-  color: #e74c3c;
+  font-size: 20px;
+  margin-top: 10px;
 }
