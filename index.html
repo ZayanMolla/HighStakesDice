@@ -16,26 +16,37 @@
       Losses: <span id="losses">0</span> |
       Win %: <span id="winrate">0</span>%
     </div>
-    
+
     <input type="number" id="bet" placeholder="Bet Amount" />
     <input type="range" id="bet-slider" min="1" max="1000" value="10" />
-    
+
+    <!-- Toggle Buttons for Mode -->
     <div class="mode">
-      <label><input type="radio" name="direction" value="under" checked /> Under</label>
-      <label><input type="radio" name="direction" value="over" /> Over</label>
-      <label><input type="radio" name="direction" value="between" /> Between</label>
+      <input type="radio" name="direction" value="under" id="under" checked />
+      <label for="under">Under</label>
+
+      <input type="radio" name="direction" value="over" id="over" />
+      <label for="over">Over</label>
+
+      <input type="radio" name="direction" value="between" id="between" />
+      <label for="between">Between</label>
     </div>
 
+    <!-- Target Fields -->
     <div class="targets">
       <input type="number" id="target" placeholder="Target (1–99)" />
       <input type="number" id="min-target" placeholder="Min (for Between)" />
       <input type="number" id="max-target" placeholder="Max (for Between)" />
     </div>
 
-    <button id="roll-btn">Roll</button>
-    <button id="repeat-btn">Repeat Last Bet</button>
-    <button id="reset-btn">Reset Progress</button>
+    <!-- Buttons -->
+    <div class="button-group">
+      <button id="roll-btn">🎲 Roll</button>
+      <button id="repeat-btn">🔁 Repeat</button>
+      <button id="reset-btn">♻️ Reset</button>
+    </div>
 
+    <!-- Dice and Result -->
     <div id="dice-container"><div id="dice">?</div></div>
     <div class="result" id="result"></div>
     <ul id="history"></ul>

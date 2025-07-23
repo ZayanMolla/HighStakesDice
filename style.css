@@ -37,23 +37,8 @@ input[type="number"] {
   accent-color: #00b894;
   box-sizing: border-box;
 }
-#roll-btn, #repeat-btn {
-  cursor: pointer;
-  background: #00b894;
-  color: white;
-}
-#reset-btn {
-  background: #e74c3c;
-  color: white;
-  cursor: pointer;
-  padding: 10px 16px;
-  margin-top: 10px;
-  border-radius: 6px;
-  transition: background 0.3s ease;
-}
-#reset-btn:hover {
-  background: #c0392b;
-}
+
+/* Mode toggle buttons */
 .mode {
   display: flex;
   flex-wrap: wrap;
@@ -61,22 +46,29 @@ input[type="number"] {
   gap: 10px;
   margin: 10px 0;
 }
+.mode input[type="radio"] {
+  display: none;
+}
 .mode label {
   background: #34495e;
   padding: 10px 16px;
-  border-radius: 6px;
+  border-radius: 8px;
   cursor: pointer;
   color: white;
   user-select: none;
-  transition: background 0.3s;
-  white-space: nowrap;
+  transition: all 0.3s ease;
+  border: 2px solid transparent;
+}
+.mode input[type="radio"]:checked + label {
+  background: #00b894;
+  border-color: #00e3aa;
+  color: white;
+  box-shadow: 0 0 8px #00e3aa88;
 }
 .mode label:hover {
   background: #3d566e;
 }
-.mode input {
-  margin-right: 6px;
-}
+
 .targets {
   display: flex;
   flex-wrap: wrap;
@@ -84,6 +76,42 @@ input[type="number"] {
   gap: 10px;
   margin-bottom: 15px;
 }
+
+/* Buttons */
+.button-group {
+  display: flex;
+  justify-content: center;
+  flex-wrap: wrap;
+  gap: 10px;
+  margin: 10px 0;
+}
+button {
+  cursor: pointer;
+  border: none;
+  padding: 12px 20px;
+  border-radius: 10px;
+  font-size: 16px;
+  transition: background 0.3s ease, transform 0.1s ease;
+  min-width: 100px;
+  color: white;
+  box-shadow: 0 4px 10px rgba(0,0,0,0.2);
+}
+#roll-btn, #repeat-btn {
+  background: #00b894;
+}
+#roll-btn:hover, #repeat-btn:hover {
+  background: #00a383;
+  transform: scale(1.05);
+}
+#reset-btn {
+  background: #e74c3c;
+}
+#reset-btn:hover {
+  background: #c0392b;
+  transform: scale(1.05);
+}
+
+/* Dice & Result */
 #dice-container {
   margin: 20px auto;
   height: 80px;
@@ -105,6 +133,8 @@ input[type="number"] {
   margin-top: 15px;
   font-weight: bold;
 }
+
+/* History */
 #history {
   list-style: none;
   padding: 0;
