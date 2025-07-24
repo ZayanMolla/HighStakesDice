@@ -1,39 +1,359 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
- <meta charset="UTF-8" />
- <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
- <title>Dice Betting Game</title>
- <link rel="stylesheet" href="style.css" />
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Dice Betting Game</title>
+  <link rel="stylesheet" href="style.css" />
+  <style>
+    body {
+      font-family: 'Segoe UI', sans-serif;
+      background: linear-gradient(135deg, #1f1c2c, #928dab);
+      color: #eee;
+      text-align: center;
+      padding: 30px;
+      min-height: 100vh;
+      margin: 0;
+    }
+
+    .container {
+      background: rgba(0, 0, 0, 0.7);
+      max-width: 480px;
+      margin: auto;
+      padding: 20px;
+      border-radius: 16px;
+      box-shadow: 0 8px 20px rgba(0, 0, 0, 0.5);
+    }
+
+    input, button {
+      margin: 8px;
+      padding: 10px;
+      font-size: 1em;
+      border: none;
+      border-radius: 6px;
+      max-width: 100%;
+    }
+
+    input {
+      width: 140px;
+    }
+
+    #roll-btn, #repeat-btn {
+      cursor: pointer;
+      background: #00b894;
+      color: white;
+    }
+
+    #reset-btn {
+      background: #e74c3c;
+      color: white;
+      cursor: pointer;
+      padding: 10px 16px;
+      margin-top: 10px;
+      border-radius: 6px;
+      transition: background 0.3s ease;
+    }
+
+    #reset-btn:hover {
+      background: #c0392b;
+    }
+
+    .mode {
+      display: flex;
+      flex-wrap: wrap;
+      justify-content: center;
+      gap: 10px;
+      margin: 10px 0;
+    }
+
+    .mode input {
+      display: none;
+    }
+
+    .mode label {
+      background: linear-gradient(145deg, #2c3e50, #34495e);
+      padding: 12px 20px;
+      border-radius: 12px;
+      cursor: pointer;
+      color: #ecf0f1;
+      user-select: none;
+      transition: all 0.3s ease;
+      white-space: nowrap;
+      box-shadow: 0 4px 8px rgba(0, 0, 0, 0.3);
+      border: 2px solid transparent;
+      font-weight: 500;
+    }
+
+    .mode input:checked + label {
+      background: linear-gradient(145deg, #27ae60, #2ecc71);
+      border-color: #2ecc71;
+      color: #fff;
+      box-shadow: 0 0 10px #2ecc71;
+    }
+
+    .targets {
+      display: flex;
+      flex-wrap: wrap;
+      justify-content: center;
+      gap: 10px;
+      margin-bottom: 15px;
+    }
+
+    #dice-container {
+      margin: 20px auto;
+      height: 80px;
+    }
+
+    #dice {
+      font-size: 36px;
+      width: 60px;
+      height: 60px;
+      margin: auto;
+      background: white;
+      color: black;
+      border-radius: 10px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      transition: transform 0.5s ease;
+    }
+
+    .result {
+      margin-top: 15px;
+      font-weight: bold;
+    }
+
+    #history {
+      list-style: none;
+      padding: 0;
+      margin-top: 15px;
+      text-align: left;
+    }
+
+    #history li {
+      padding: 6px;
+      font-size: 14px;
+    }
+
+    .win { color: #2ecc71; }
+    .lose { color: #e74c3c; }
+
+    #multiplier {
+      font-size: 1em;
+      margin-top: 10px;
+      font-weight: bold;
+      color: #00ff99;
+    }
+  </style>
 </head>
 <body>
- <div class="container">
-   <h1>Dice Betting Game</h1>
-   <div class="balance">Balance: <span id="balance">0</span> dollars</div>
-   <div class="profit">Profit: <span id="profit">0</span> dollars</div>
-   <div class="stats">
-     Wins: <span id="wins">0</span> |
-     Losses: <span id="losses">0</span> |
-     Win %: <span id="winrate">0</span>%
-   </div>
-   <input type="number" id="bet" placeholder="Bet Amount" />
-   <div class="mode">
-     <label><input type="radio" name="direction" value="under" checked /> Under</label>
-     <label><input type="radio" name="direction" value="over" /> Over</label>
-     <label><input type="radio" name="direction" value="between" /> Between</label>
-   </div>
-   <div class="targets">
-     <input type="number" id="target" placeholder="Target (1â€“99)" />
-     <input type="number" id="min-target" placeholder="Min (for Between)" />
-     <input type="number" id="max-target" placeholder="Max (for Between)" />
-   </div>
-   <button id="roll-btn">Roll</button>
-   <button id="repeat-btn">Repeat Last Bet</button>
-   <button id="reset-btn">Reset Progress</button>
-   <div id="dice-container"><div id="dice">?</div></div>
-   <div class="result" id="result"></div>
-   <ul id="history"></ul>
- </div>
- <script src="script.js"></script>
+  <div class="container">
+    <h1>Dice Betting Game</h1>
+    <div class="balance">Balance: <span id="balance">0</span> dollars</div>
+    <div class="profit">Profit: <span id="profit">0</span> dollars</div>
+    <div class="stats">
+      Wins: <span id="wins">0</span> |
+      Losses: <span id="losses">0</span> |
+      Win %: <span id="winrate">0</span>%
+    </div>
+    <input type="number" id="bet" placeholder="Bet Amount" />
+
+    <div class="mode">
+      <input type="radio" name="direction" value="under" id="under" checked />
+      <label for="under">Under</label>
+      <input type="radio" name="direction" value="over" id="over" />
+      <label for="over">Over</label>
+      <input type="radio" name="direction" value="between" id="between" />
+      <label for="between">Between</label>
+    </div>
+
+    <div class="targets">
+      <input type="number" id="target" placeholder="Target (1–99)" />
+      <input type="number" id="min-target" placeholder="Min (for Between)" />
+      <input type="number" id="max-target" placeholder="Max (for Between)" />
+    </div>
+
+    <div id="multiplier"></div>
+
+    <button id="roll-btn">Roll</button>
+    <button id="repeat-btn">Repeat Last Bet</button>
+    <button id="reset-btn">Reset Progress</button>
+
+    <div id="dice-container"><div id="dice">?</div></div>
+    <div class="result" id="result"></div>
+    <ul id="history"></ul>
+  </div>
+
+  <script>
+    const balanceDisplay = document.getElementById("balance");
+    const profitDisplay = document.getElementById("profit");
+    const resultDisplay = document.getElementById("result");
+    const winDisplay = document.getElementById("wins");
+    const lossDisplay = document.getElementById("losses");
+    const winrateDisplay = document.getElementById("winrate");
+    const history = document.getElementById("history");
+    const dice = document.getElementById("dice");
+
+    const betInput = document.getElementById("bet");
+    const targetInput = document.getElementById("target");
+    const minTargetInput = document.getElementById("min-target");
+    const maxTargetInput = document.getElementById("max-target");
+    const multiplierDisplay = document.getElementById("multiplier");
+
+    let balance = parseFloat(localStorage.getItem("balance")) || 1000;
+    let wins = parseInt(localStorage.getItem("wins")) || 0;
+    let losses = parseInt(localStorage.getItem("losses")) || 0;
+    let profit = parseFloat(localStorage.getItem("profit")) || 0;
+    let lastBet = null;
+    const houseEdge = 0.01;
+
+    function updateUI() {
+      balanceDisplay.textContent = balance.toFixed(2);
+      profitDisplay.textContent = profit.toFixed(2);
+      winDisplay.textContent = wins;
+      lossDisplay.textContent = losses;
+      const total = wins + losses;
+      winrateDisplay.textContent = total ? ((wins / total) * 100).toFixed(1) : 0;
+      localStorage.setItem("balance", balance);
+      localStorage.setItem("wins", wins);
+      localStorage.setItem("losses", losses);
+      localStorage.setItem("profit", profit);
+      updateMultiplier();
+    }
+
+    function addToHistory(message, win) {
+      const entry = document.createElement("li");
+      entry.textContent = message;
+      entry.classList.add(win ? "win" : "lose");
+      history.prepend(entry);
+    }
+
+    function updateMultiplier() {
+      const direction = document.querySelector('input[name="direction"]:checked').value;
+      let chance = 0;
+
+      if (direction === "under") {
+        const val = parseInt(targetInput.value);
+        if (val > 0 && val < 100) chance = val;
+      } else if (direction === "over") {
+        const val = parseInt(targetInput.value);
+        if (val > 0 && val < 100) chance = 100 - val;
+      } else if (direction === "between") {
+        const min = parseInt(minTargetInput.value);
+        const max = parseInt(maxTargetInput.value);
+        if (!isNaN(min) && !isNaN(max) && min < max && min >= 0 && max <= 100) {
+          chance = max - min;
+        }
+      }
+
+      if (chance > 0) {
+        const payout = (100 / chance) * (1 - houseEdge);
+        multiplierDisplay.textContent = `Payout Multiplier: x${payout.toFixed(2)}`;
+      } else {
+        multiplierDisplay.textContent = "";
+      }
+    }
+
+    function updateInputVisibility() {
+      const selected = document.querySelector('input[name="direction"]:checked').value;
+      if (selected === "between") {
+        targetInput.style.display = "none";
+        minTargetInput.style.display = "inline-block";
+        maxTargetInput.style.display = "inline-block";
+      } else {
+        targetInput.style.display = "inline-block";
+        minTargetInput.style.display = "none";
+        maxTargetInput.style.display = "none";
+      }
+      updateMultiplier();
+    }
+
+    document.getElementById("roll-btn").addEventListener("click", () => {
+      const bet = parseFloat(betInput.value);
+      const direction = document.querySelector('input[name="direction"]:checked').value;
+      const target = parseInt(targetInput.value);
+      const min = parseInt(minTargetInput.value);
+      const max = parseInt(maxTargetInput.value);
+
+      if (bet > balance || bet < 1 || bet > 100 || isNaN(bet)) return alert("Invalid bet");
+
+      let roll = Math.floor(Math.random() * 100);
+      dice.textContent = "?";
+      dice.style.transform = "rotate(720deg)";
+
+      setTimeout(() => {
+        dice.textContent = roll;
+        dice.style.transform = "rotate(0deg)";
+
+        let win = false;
+        let chance = 0;
+
+        if (direction === "under") {
+          win = roll < target;
+          chance = target;
+        } else if (direction === "over") {
+          win = roll > target;
+          chance = 100 - target;
+        } else if (direction === "between") {
+          win = roll >= min && roll <= max;
+          chance = max - min;
+        }
+
+        const payout = (100 / chance) * (1 - houseEdge);
+        let message = `Roll: ${roll}`;
+
+        if (win) {
+          const gain = bet * payout - bet;
+          balance += gain;
+          profit += gain;
+          wins++;
+          resultDisplay.textContent = `${message} — You Win! +$${gain.toFixed(2)}`;
+        } else {
+          balance -= bet;
+          profit -= bet;
+          losses++;
+          resultDisplay.textContent = `${message} — You Lose! -$${bet.toFixed(2)}`;
+        }
+
+        addToHistory(resultDisplay.textContent, win);
+        updateUI();
+        lastBet = { bet, direction, target, min, max };
+      }, 600);
+    });
+
+    document.getElementById("repeat-btn").addEventListener("click", () => {
+      if (!lastBet) return;
+      betInput.value = lastBet.bet;
+      document.querySelector(`input[value="${lastBet.direction}"]`).checked = true;
+      targetInput.value = lastBet.target || "";
+      minTargetInput.value = lastBet.min || "";
+      maxTargetInput.value = lastBet.max || "";
+      updateInputVisibility();
+    });
+
+    document.getElementById("reset-btn").addEventListener("click", () => {
+      if (confirm("Are you sure you want to reset your progress?")) {
+        balance = 1000;
+        profit = 0;
+        wins = 0;
+        losses = 0;
+        localStorage.clear();
+        updateUI();
+        history.innerHTML = "";
+        resultDisplay.textContent = "";
+      }
+    });
+
+    document.querySelectorAll('input[name="direction"]').forEach(radio => {
+      radio.addEventListener("change", updateInputVisibility);
+    });
+
+    [targetInput, minTargetInput, maxTargetInput].forEach(input => {
+      input.addEventListener("input", updateMultiplier);
+    });
+
+    updateInputVisibility();
+    updateUI();
+  </script>
 </body>
 </html>
