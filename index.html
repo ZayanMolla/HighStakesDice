@@ -9,43 +9,31 @@
 <body>
   <div class="container">
     <h1>Dice Betting Game</h1>
-    
-    <div class="balance">Balance: $<span id="balance">1000</span></div>
-    
-    <div class="bet-input">
-      <label for="betAmount">Bet Amount:</label>
-      <input type="number" id="betAmount" value="10" min="1">
+    <div class="balance">Balance: <span id="balance">0</span> dollars</div>
+    <div class="profit">Profit: <span id="profit">0</span> dollars</div>
+    <div class="stats">
+      Wins: <span id="wins">0</span> |
+      Losses: <span id="losses">0</span> |
+      Win %: <span id="winrate">0</span>%
     </div>
-
-    <div class="mode-buttons">
-      <button id="underBtn">Under</button>
-      <button id="betweenBtn">Between</button>
-      <button id="overBtn">Over</button>
+    <input type="number" id="bet" placeholder="Bet Amount" />
+    <div class="mode">
+      <label><input type="radio" name="direction" value="under" checked /> Under</label>
+      <label><input type="radio" name="direction" value="over" /> Over</label>
+      <label><input type="radio" name="direction" value="between" /> Between</label>
     </div>
-
-    <!-- Over/Under Controls -->
-    <div id="overUnderControls">
-      <label>Target Number:</label>
-      <input type="range" id="slider" min="1" max="99" value="50">
-      <div id="sliderOverlay"></div>
-      <input type="number" id="targetNumber" min="1" max="99" value="50">
+    <div class="targets">
+      <input type="number" id="target" placeholder="Target (1–99)" />
+      <input type="number" id="min-target" placeholder="Min (for Between)" />
+      <input type="number" id="max-target" placeholder="Max (for Between)" />
     </div>
-
-    <!-- Between Controls -->
-    <div id="betweenControls" style="display: none;">
-      <label>Between:</label>
-      <input type="number" id="lowerBound" min="1" max="99" value="33">
-      <input type="number" id="upperBound" min="2" max="100" value="66">
-    </div>
-
-    <div class="multiplier">Multiplier: <span id="multiplier">x0.00</span></div>
-
-    <button id="rollBtn">Roll Dice</button>
-
-    <div class="dice-animation" id="dice">🎲</div>
-    <div class="result" id="result">Roll to start!</div>
+    <button id="roll-btn">Roll</button>
+    <button id="repeat-btn">Repeat Last Bet</button>
+    <button id="reset-btn">Reset Progress</button>
+    <div id="dice-container"><div id="dice">?</div></div>
+    <div class="result" id="result"></div>
+    <ul id="history"></ul>
   </div>
-
   <script src="script.js"></script>
 </body>
 </html>
