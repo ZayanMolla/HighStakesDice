@@ -9,13 +9,16 @@ const profitDisplay = document.getElementById("profit");
 const winsDisplay = document.getElementById("wins");
 const lossesDisplay = document.getElementById("losses");
 const winrateDisplay = document.getElementById("winrate");
+
 const betInput = document.getElementById("bet");
 const targetInput = document.getElementById("target");
 const minTargetInput = document.getElementById("min-target");
 const maxTargetInput = document.getElementById("max-target");
+
 const rollBtn = document.getElementById("roll-btn");
 const repeatBtn = document.getElementById("repeat-btn");
 const resetBtn = document.getElementById("reset-btn");
+
 const resultDisplay = document.getElementById("result");
 const diceDisplay = document.getElementById("dice");
 const historyList = document.getElementById("history");
@@ -61,63 +64,56 @@ function placeBet() {
   const mode = getSelectedMode();
   const bet = parseFloat(betInput.value);
 
-  // ✅ Updated validation: allow bets up to balance, but not under $1
-  if (isNaN(bet) || bet < 1 || bet > balance) {
-    alert("Invalid bet. Bet must be between $1 and your current balance.");
-    return;
-  }
+  if (isNaN(bet) || bet <= 0) return alert("Enter a valid bet.");
+  if (bet > balance) return alert("Insufficient balance.");
+  if (bet < 1) return alert("Minimum bet is $1.");
 
   let roll = rollDice();
   animateDiceRoll(roll);
-  let win = false;
-  let payout = 0;
-  let chance = 0;
-  let multiplier = 0;
 
-  if (mode === "under") {
+  let win = false, payout = 0, chance = 0, multiplier = 0;
+
+  if (mode === "under" || mode === "over") {
     const target = parseInt(targetInput.value);
-    if (isNaN(target) || target <= 1 || target > 100) {
-      alert("Target must be between 2 and 100 for Under mode.");
-      return;
+    if (isNaN(target) || target < 1 || target > 100) {
+      return alert("Target must be between 1 and 100.");
     }
-    chance = target - 1;
-    multiplier = getMultiplier(chance);
-    win = roll < target;
-  } else if (mode === "over") {
-    const target = parseInt(targetInput.value);
-    if (isNaN(target) || target < 1 || target >= 100) {
-      alert("Target must be between 1 and 99 for Over mode.");
-      return;
+    if (mode === "under") {
+      chance = target - 1;
+      win = roll < target;
+    } else {
+      chance = 100 - target;
+      win = roll > target;
     }
-    chance = 100 - target;
-    multiplier = getMultiplier(chance);
-    win = roll > target;
   } else if (mode === "between") {
     const min = parseInt(minTargetInput.value);
     const max = parseInt(maxTargetInput.value);
     if (isNaN(min) || isNaN(max) || min >= max || min < 1 || max > 100) {
-      alert("Enter valid min and max values between 1 and 100.");
-      return;
+      return alert("Enter valid min and max between 1 and 100.");
     }
     chance = max - min + 1;
-    multiplier = getMultiplier(chance);
     win = roll >= min && roll <= max;
   }
+
+  multiplier = getMultiplier(chance);
 
   if (win) {
     payout = bet * multiplier;
     balance += payout - bet;
     profit += payout - bet;
     wins++;
-    showResult(`You rolled ${roll}. You win $${(payout - bet).toFixed(2)}!`, true);
+    showResult(`🎉 Rolled ${roll}. You win $${(payout - bet).toFixed(2)} (x${multiplier})`, true);
   } else {
     balance -= bet;
     profit -= bet;
     losses++;
-    showResult(`You rolled ${roll}. You lost $${bet.toFixed(2)}.`, false);
+    showResult(`💀 Rolled ${roll}. You lost $${bet.toFixed(2)}.`, false);
   }
 
-  historyList.innerHTML = `<li class="${win ? "win" : "lose"}">Rolled ${roll} — ${win ? "Win" : "Lose"} — ${mode}</li>` + historyList.innerHTML;
+  historyList.innerHTML =
+    `<li class="${win ? "win" : "lose"}">Rolled ${roll} — ${win ? "Win" : "Lose"} — ${mode}</li>` +
+    historyList.innerHTML;
+
   updateStats();
 
   lastBet = {
@@ -129,8 +125,21 @@ function placeBet() {
   };
 }
 
-rollBtn.addEventListener("click", placeBet);
+function updateInputVisibility() {
+  const mode = getSelectedMode();
+  const betweenInputs = document.getElementById("between-inputs");
+  const targetInput = document.getElementById("target");
 
+  if (mode === "between") {
+    betweenInputs.style.display = "flex";
+    targetInput.style.display = "none";
+  } else {
+    betweenInputs.style.display = "none";
+    targetInput.style.display = "inline-block";
+  }
+}
+
+rollBtn.addEventListener("click", placeBet);
 repeatBtn.addEventListener("click", () => {
   if (lastBet) {
     document.querySelector(`input[value="${lastBet.mode}"]`).checked = true;
@@ -138,10 +147,10 @@ repeatBtn.addEventListener("click", () => {
     targetInput.value = lastBet.target;
     minTargetInput.value = lastBet.min;
     maxTargetInput.value = lastBet.max;
+    updateInputVisibility();
     placeBet();
   }
 });
-
 resetBtn.addEventListener("click", () => {
   balance = 1000;
   profit = 0;
@@ -151,23 +160,6 @@ resetBtn.addEventListener("click", () => {
   resultDisplay.textContent = "";
   updateStats();
 });
-
-function updateInputVisibility() {
-  const mode = getSelectedMode();
-  const sliderContainer = document.getElementById("slider-container");
-  const targetInputContainer = document.getElementById("target-container");
-  const betweenInputs = document.getElementById("between-inputs");
-
-  if (mode === "between") {
-    sliderContainer.style.display = "none";
-    targetInputContainer.style.display = "none";
-    betweenInputs.style.display = "flex";
-  } else {
-    sliderContainer.style.display = "none";
-    targetInputContainer.style.display = "block";
-    betweenInputs.style.display = "none";
-  }
-}
 
 document.querySelectorAll('input[name="direction"]').forEach(input => {
   input.addEventListener("change", updateInputVisibility);

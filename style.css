@@ -43,7 +43,6 @@ input {
 #reset-btn:hover {
   background: #c0392b;
 }
-
 .mode {
   display: flex;
   flex-wrap: wrap;
@@ -77,16 +76,19 @@ input {
   color: white;
   box-shadow: 0 0 10px #2ecc71, 0 0 20px #2ecc71;
   border-color: #2ecc71;
-  outline: 2px solid #2ecc71;
-  outline-offset: 4px;
 }
-
 .targets {
   display: flex;
   flex-wrap: wrap;
   justify-content: center;
   gap: 10px;
   margin-bottom: 15px;
+}
+#between-inputs {
+  display: none;
+  flex-wrap: wrap;
+  justify-content: center;
+  width: 100%;
 }
 #dice-container {
   margin: 20px auto;
