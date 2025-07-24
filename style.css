@@ -7,7 +7,6 @@ body {
   min-height: 100vh;
   margin: 0;
 }
-
 .container {
   background: rgba(0, 0, 0, 0.7);
   max-width: 480px;
@@ -16,7 +15,6 @@ body {
   border-radius: 16px;
   box-shadow: 0 8px 20px rgba(0, 0, 0, 0.5);
 }
-
 input, button {
   margin: 8px;
   padding: 10px;
@@ -25,17 +23,14 @@ input, button {
   border-radius: 6px;
   max-width: 100%;
 }
-
 input {
   width: 140px;
 }
-
 #roll-btn, #repeat-btn {
   cursor: pointer;
   background: #00b894;
   color: white;
 }
-
 #reset-btn {
   background: #e74c3c;
   color: white;
@@ -56,11 +51,9 @@ input {
   gap: 10px;
   margin: 10px 0;
 }
-
 .mode input {
   display: none;
 }
-
 .mode label {
   background: linear-gradient(145deg, #2c3e50, #34495e);
   padding: 12px 20px;
@@ -74,18 +67,18 @@ input {
   border: 1px solid transparent;
   font-weight: 500;
 }
-
 .mode label:hover {
   background: linear-gradient(145deg, #3b5770, #4a6b8a);
   transform: translateY(-2px);
   box-shadow: 0 6px 16px rgba(0, 0, 0, 0.4);
 }
-
 .mode input:checked + label {
   background: linear-gradient(145deg, #27ae60, #2ecc71);
   color: white;
   box-shadow: 0 0 10px #2ecc71, 0 0 20px #2ecc71;
   border-color: #2ecc71;
+  outline: 2px solid #2ecc71;
+  outline-offset: 4px;
 }
 
 .targets {
@@ -95,12 +88,10 @@ input {
   gap: 10px;
   margin-bottom: 15px;
 }
-
 #dice-container {
   margin: 20px auto;
   height: 80px;
 }
-
 #dice {
   font-size: 36px;
   width: 60px;
@@ -114,28 +105,23 @@ input {
   justify-content: center;
   transition: transform 0.5s ease;
 }
-
 .result {
   margin-top: 15px;
   font-weight: bold;
 }
-
 #history {
   list-style: none;
   padding: 0;
   margin-top: 15px;
   text-align: left;
 }
-
 #history li {
   padding: 6px;
   font-size: 14px;
 }
-
 .win {
   color: #2ecc71;
 }
-
 .lose {
   color: #e74c3c;
 }
