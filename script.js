@@ -152,7 +152,7 @@ repeatBtn.addEventListener("click", () => {
   }
 });
 resetBtn.addEventListener("click", () => {
-  balance = 1000;
+  balance = 100;
   profit = 0;
   wins = 0;
   losses = 0;
