@@ -127,3 +127,9 @@ input {
 .lose {
   color: #e74c3c;
 }
+#multiplier-display {
+  font-size: 1.1em;
+  font-weight: bold;
+  margin-bottom: 10px;
+  color: #f1c40f;
+}

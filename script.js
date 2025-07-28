@@ -167,3 +167,39 @@ document.querySelectorAll('input[name="direction"]').forEach(input => {
 
 updateStats();
 updateInputVisibility();
+updateMultiplierDisplay();
+
+function updateMultiplierDisplay() {
+  const mode = getSelectedMode();
+  const multiplierDisplay = document.getElementById("multiplier-display");
+  let chance = 0;
+
+  if (mode === "under" || mode === "over") {
+    const target = parseInt(targetInput.value);
+    if (isNaN(target) || target <= 1 || target >= 100) {
+      multiplierDisplay.textContent = "Multiplier: x0.00";
+      return;
+    }
+    chance = mode === "under" ? target - 1 : 100 - target;
+  } else if (mode === "between") {
+    const min = parseInt(minTargetInput.value);
+    const max = parseInt(maxTargetInput.value);
+    if (isNaN(min) || isNaN(max) || min >= max || min < 1 || max > 100) {
+      multiplierDisplay.textContent = "Multiplier: x0.00";
+      return;
+    }
+    chance = max - min + 1;
+  }
+
+  const multiplier = getMultiplier(chance);
+  multiplierDisplay.textContent = `Multiplier: x${multiplier}`;
+}document.querySelectorAll('input[name="direction"]').forEach(input => {
+  input.addEventListener("change", () => {
+    updateInputVisibility();
+    updateMultiplierDisplay();
+  });
+});
+
+[betInput, targetInput, minTargetInput, maxTargetInput].forEach(input => {
+  input.addEventListener("input", updateMultiplierDisplay);
+});
