@@ -1,4 +1,4 @@
-let balance = 1000;
+let balance = 100;
 let profit = 0;
 let wins = 0;
 let losses = 0;
